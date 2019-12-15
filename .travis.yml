@@ -27,7 +27,7 @@ after_success:
   - docker push andrademarco/fibonacci-docker-worker
 
 deploy:
-  # edge: true
+  edge: true
   provider: elasticbeanstalk
   region: us-east-2
   app: fibonacci-docker
