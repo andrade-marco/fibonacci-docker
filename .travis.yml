@@ -1,0 +1,25 @@
+sudo: required
+services:
+  - docker
+
+# Build image for the client (could add others) for tests
+before_install:
+  - docker build -t andrademarco/react-test -f ./client/Dockerfile.dev ./client
+
+# Run tests for client
+script:
+  - docker run -e CI=true andrademarco/react-test npm test
+
+# Build production version of images
+after_success:
+  - docker build -t andrademarco/fibonacci-docker-client ./client
+  - docker build -t andrademarco/fibonacci-docker-nginx ./nginx
+  - docker build -t andrademarco/fibonacci-docker-server ./server
+  - docker build -t andrademarco/fibonacci-docker-worker ./worker
+  # Login to docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Push images to docker hub
+  - docker push andrademarco/fibonacci-docker-client
+  - docker push andrademarco/fibonacci-docker-nginx
+  - docker push andrademarco/fibonacci-docker-server
+  - docker push andrademarco/fibonacci-docker-worker
